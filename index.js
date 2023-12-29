@@ -343,7 +343,7 @@ const createPaymentUrl = async (orderInfo, amount, orderId, req) => {
   const date = new Date();
 
   const vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-  const returnUrl = "http://localhost:3000/success";
+  const returnUrl = "https://realstate-client.onrender.com/success";
   const vnpTmnCode = '5Z1Z1OM0';
   const vnpHashSecret = 'XGYTWMNPIDGGGHEBIUKYUTSOZWKHCBCR';
  
