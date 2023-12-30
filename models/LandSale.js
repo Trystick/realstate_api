@@ -61,6 +61,10 @@ const LandSaleSchema = new mongoose.Schema({
     photos:{
         type: [String],
     },
+    isApproved: {
+        type: Boolean,
+        default: false,
+    },
 }, {timestamps:true});
 
 export default mongoose.model("LandSale", LandSaleSchema)

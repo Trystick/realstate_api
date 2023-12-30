@@ -1,5 +1,5 @@
 import express from "express";
-import { createLandSale, deleteLandSale, getLandSale, getLandSales, getLandSalesByUser, getLandSaleThree, getRandomLandSales, getWeeklyLandSaleAndLease, updateLandSale } from "../controller/landsale.js";
+import { approveLandSale, createLandSale, deleteLandSale, getLandSale, getLandSales, getLandSalesByUser, getLandSalesUser, getLandSaleThree, getRandomLandSales, getWeeklyLandSaleAndLease, updateLandSale } from "../controller/landsale.js";
 
 
 import { verifyUser } from "../utils/verifyToken.js";
@@ -17,6 +17,8 @@ router.get("/find/:id", getLandSale);
 //GetAll
 router.get("/", getLandSales);
 
+router.get("/userlandsale", getLandSalesUser);
+
 router.get("/landsalethree", getLandSaleThree);
 
 router.get('/randomlandsales', getRandomLandSales);
@@ -24,5 +26,7 @@ router.get('/randomlandsales', getRandomLandSales);
 router.get('/user/:userId', getLandSalesByUser);
 
 router.get('/weekly-land-sale-lease/:year/:month', getWeeklyLandSaleAndLease);
+
+router.post('/approve/:id', approveLandSale);
 
 export default router

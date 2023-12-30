@@ -58,6 +58,10 @@ const LandLeaseSchema = new mongoose.Schema({
     photos:{
         type: [String],
     },
+    isApproved: {
+        type: Boolean,
+        default: false,
+    },
 }, {timestamps:true});
 
 export default mongoose.model("LandLease", LandLeaseSchema)

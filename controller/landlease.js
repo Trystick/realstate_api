@@ -12,7 +12,10 @@ export const createLandLease = async (req, res, next) => {
         return res.status(400).send("CategoryLandLease không tồn tại!");
     }
     const newLandLease = new LandLease(
-        req.body
+        {
+            ...req.body,
+            isApproved: false,  // nếu người dùng có type, không cần kiểm duyệt
+        }
     );
 
     try {
@@ -21,6 +24,14 @@ export const createLandLease = async (req, res, next) => {
             await CategoryLandLease.findByIdAndUpdate(categoryLandLeaseId, 
                 {$push : {landleases: savedLandLease._id},
             });
+
+            setTimeout(async () => {
+              const landLease = await LandLease.findById(savedLandLease._id);
+              if (!landLease.isApproved) {
+                landLease.isApproved = true;
+                  await landLease.save();
+              }
+          }, 10 * 60 * 1000); 
         } catch (err) {
             next(err);
         }
@@ -77,12 +88,13 @@ export const deleteLandLease = async(req, res, next) => {
 };
 
 
-
-
 export const getLandLease = async(req, res, next) => {
     try {
-        const landLease =  await LandLease.findById(
-            req.params.id
+        const landLease =  await LandLease.findOne(
+            {
+                _id: req.params.id,
+                isApproved: true
+            }
         );
         res.status(200).json(landLease)
     } catch (err) {
@@ -99,13 +111,23 @@ export const getLandLeases = async (req, res, next) => {
   }
 }
 
+export const getLandLeasesUser = async (req, res, next) => {
+    try {
+      const landLeases =  await LandLease.find({isApproved: true});
+      res.status(200).json(landLeases)
+    } catch (err) {
+        next(err);
+    }
+  }
+  
+
 export const getLandLeaseThree = async (req, res, next) => {
     try {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 3;
       const skip = (page - 1) * limit;
-      const total = await LandLease.countDocuments();
-      const landleases = await LandLease.find().skip(skip).limit(limit);
+      const total = await LandLease.countDocuments({isApproved: true});
+      const landleases = await LandLease.find({isApproved: true}).skip(skip).limit(limit);
       res.status(200).json({ landleases, page, limit, total });
     } catch (err) {
       next(err);
@@ -114,7 +136,7 @@ export const getLandLeaseThree = async (req, res, next) => {
     
 export const getRandomLandLeases = async (req, res, next) => {
     try {
-      const landleases = await LandLease.aggregate([{ $sample: { size: 3 } }]);
+      const landleases = await LandLease.aggregate([{ $match: { isApproved: true } }, { $sample: { size: 3 } }]);
       res.status(200).json(landleases);
     } catch (err) {
       next(err);
@@ -130,3 +152,17 @@ export const getLandLeasesByUser = async (req, res, next) => {
       next(err);
     }
   };
+
+  export const approveLandLease = async (req, res) => {
+    try {
+      const landlease = await LandLease.findById(req.params.id);
+      if (!landlease) {
+        return res.status(404).json({ message: 'Landlease not found' });
+      }
+      landlease.isApproved = true;
+      await landlease.save();
+      res.json(landlease);
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
+}
