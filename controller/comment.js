@@ -1,14 +1,31 @@
 import Comment from "../models/Comment.js";
 import User from '../models/User.js'
 
+import Filter from 'bad-words'
+const filter = new Filter();
+filter.addWords('dcm', 'đcm', 'đm', 'dm', 'cặc', 'cu', 'lồn', 'đũy', 'đĩ', 'đụ', 'má', 'con mẹ nó', 'lồn má', 'loz', 'cức', 'điên', 'khùng', 'vcl');
+
 export const createComment = async (req, res) => {
   try {
       const user = await User.findById(req.body.userId);
+      if (filter.isProfane(req.body.content)) {
+          return res.status(400).send({ message: 'Bình luận chứa từ ngữ không phù hợp.' });
+      }
       const comment = new Comment({
         ...req.body,
-        isApproved: user.type ? true : false,  // nếu người dùng có type, không cần kiểm duyệt
+        isApproved: user.type ? true : false,
       });
       await comment.save();
+
+      // Thiết lập hẹn giờ để cập nhật isApproved sau 10 phút
+      setTimeout(async () => {
+        const commentToUpdate = await Comment.findById(comment._id);
+        if (!commentToUpdate.isApproved) {
+            commentToUpdate.isApproved = true;
+            await commentToUpdate.save();
+        }
+      }, 10 * 60 * 1000);  // 10 phút = 10 * 60 * 1000 ms
+
       res.status(201).send(comment);
   } catch (error) {
       res.status(500).send({ message: error.message });
@@ -26,6 +43,10 @@ export const createReply = async (req, res) => {
       return res.status(404).json({ message: 'Comment not found' });
     }
 
+    if (filter.isProfane(content)) {
+        return res.status(400).send({ message: 'Phản hồi chứa từ ngữ không phù hợp.' });
+    }
+
     const reply = new Comment({
       userId,
       postId: comment.postId,
@@ -37,6 +58,15 @@ export const createReply = async (req, res) => {
 
     await reply.save();
 
+    // Thiết lập hẹn giờ để cập nhật isApproved sau 10 phút
+    setTimeout(async () => {
+        const replyToUpdate = await Comment.findById(reply._id);
+        if (!replyToUpdate.isApproved) {
+            replyToUpdate.isApproved = true;
+            await replyToUpdate.save();
+        }
+    }, 10 * 60 * 1000);  // 10 phút = 10 * 60 * 1000 ms
+
     comment.replies.push(reply);
     await comment.save();
 
@@ -45,7 +75,6 @@ export const createReply = async (req, res) => {
       res.status(500).json({ message: 'Error creating reply', error });
     }
 };
-
 
 
 export const getComment = async (req, res) => {
