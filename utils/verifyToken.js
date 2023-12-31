@@ -22,6 +22,12 @@ export const verifyToken = (req, res, next) => {
         const fullUser = await User.findById(user.id).populate('role');
         req.user = fullUser;
         await updateAdminRoles(); // Cập nhật danh sách vai trò sau khi xác minh token
+        res.cookie('access_token', token, {
+            httpOnly: true,
+            secure: true, // Đặt thành true nếu bạn đang chạy ứng dụng trên HTTPS
+            sameSite: 'None', // Cho phép cookie được gửi trong các yêu cầu cross-site
+        });
+
         next();
     });
 };
