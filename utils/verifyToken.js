@@ -40,15 +40,14 @@ export const verifyToken = (req, res, next) => {
         await updateAdminRoles(); // Cập nhật danh sách vai trò sau khi xác minh token
         next();
     });
-};
 
-export const setCookie = (res, token) => {
     res.cookie('access_token', token, {
         expires: new Date(Date.now() + 8 * 3600000), // cookie sẽ hết hạn sau 8 giờ
         httpOnly: true,
         domain: 'https://realstate-api-glm4.onrender.com' // đặt tên miền đầy đủ của dịch vụ của bạn ở đây
     });
 };
+
 
 
 export const verifyUser = (req, res, next) => {
