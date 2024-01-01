@@ -10,6 +10,22 @@ export const updateAdminRoles = async () => {
   adminRoles = roles.map(role => role.name);
 };
 
+// export const verifyToken = (req, res, next) => {
+//     const token = req.cookies.access_token;
+//     console.log(token);
+//     if(!token){
+//         return next(createError(401, "You are not anthenticated!"))
+//     }
+
+//     jwt.verify(token, process.env.JWT, async (err, user) => {
+//         if(err) return next(createError(403, "Token is not valid!"));
+//         const fullUser = await User.findById(user.id).populate('role');
+//         req.user = fullUser;
+//         await updateAdminRoles(); // Cập nhật danh sách vai trò sau khi xác minh token
+//         next();
+//     });
+// };
+
 export const verifyToken = (req, res, next) => {
     const token = req.cookies.access_token;
     console.log(token);
@@ -22,13 +38,15 @@ export const verifyToken = (req, res, next) => {
         const fullUser = await User.findById(user.id).populate('role');
         req.user = fullUser;
         await updateAdminRoles(); // Cập nhật danh sách vai trò sau khi xác minh token
-        res.cookie('access_token', token, {
-            httpOnly: true,
-            secure: true, // Đặt thành true nếu bạn đang chạy ứng dụng trên HTTPS
-            sameSite: 'None', // Cho phép cookie được gửi trong các yêu cầu cross-site
-        });
-
         next();
+    });
+};
+
+export const setCookie = (res, token) => {
+    res.cookie('access_token', token, {
+        expires: new Date(Date.now() + 8 * 3600000), // cookie sẽ hết hạn sau 8 giờ
+        httpOnly: true,
+        domain: 'https://realstate-api-glm4.onrender.com' // đặt tên miền đầy đủ của dịch vụ của bạn ở đây
     });
 };
 
