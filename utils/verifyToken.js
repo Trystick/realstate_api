@@ -44,7 +44,9 @@ export const verifyToken = (req, res, next) => {
     res.cookie('access_token', token, {
         expires: new Date(Date.now() + 8 * 3600000), // cookie sẽ hết hạn sau 8 giờ
         httpOnly: true,
-        domain: 'https://realstate-api-glm4.onrender.com' // đặt tên miền đầy đủ của dịch vụ của bạn ở đây
+        secure: true,
+        sameSite: none,
+        domain: 'realstate-api-glm4.onrender.com' // đặt tên miền đầy đủ của dịch vụ của bạn ở đây
     });
 };
 
