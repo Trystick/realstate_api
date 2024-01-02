@@ -55,7 +55,7 @@ mongoose.connection.on("disconected", ()=> {
 
 app.use(cors({
   credentials: true,
-  origin: ["https://realstate-client.onrender.com", "https://realstate-admin.onrender.com"],
+  origin: ["https://realstate-client.onrender.com", "https://realstate-admin.onrender.com", "https://bdsgoldenland.id.vn", "https://www.bdsgoldenland.id.vn"],
   methods:["GET","POST","PUT", "DELETE"],
 }));
 
