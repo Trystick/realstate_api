@@ -69,6 +69,9 @@ try {
   res
     .cookie("access_token", token, {
       httpOnly: true,
+      secure: true, // đảm bảo cookie chỉ được gửi qua kết nối an toàn
+      sameSite: 'none', // cho phép cookie được gửi trong các request cross-site
+      domain: 'fri-admin-pr-31.onrender.com' // đặt tên miền đầy đủ của dịch vụ của bạn ở đây
     })
     .status(200)
     .json({ details: { ...otherDetails }, role });
