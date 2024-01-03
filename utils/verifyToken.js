@@ -26,33 +26,6 @@ export const verifyToken = (req, res, next) => {
     });
 };
 
-// export const verifyToken = (req, res, next) => {
-//     const token = req.cookies.access_token;
-//     console.log(token);
-
-//     res.cookie('access_token', token, {
-//         expires: new Date(Date.now() + 8 * 3600000), // cookie sẽ hết hạn sau 8 giờ
-//         httpOnly: true,
-//         secure: true, // đảm bảo cookie chỉ được gửi qua kết nối an toàn
-//         sameSite: 'none', // cho phép cookie được gửi trong các request cross-site
-//         domain: 'fri-admin-pr-31.onrender.com' // đặt tên miền đầy đủ của dịch vụ của bạn ở đây
-//     });
-
-//     if(!token){
-//         return next(createError(401, "You are not anthenticated!"))
-//     }
-
-//     jwt.verify(token, process.env.JWT, async (err, user) => {
-//         if(err) return next(createError(403, "Token is not valid!"));
-//         const fullUser = await User.findById(user.id).populate('role');
-//         req.user = fullUser;
-//         await updateAdminRoles(); // Cập nhật danh sách vai trò sau khi xác minh token
-//         next();
-//     });
-// };
-
-
-
 
 export const verifyUser = (req, res, next) => {
     verifyToken(req, res, () => {
