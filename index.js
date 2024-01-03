@@ -343,7 +343,7 @@ const createPaymentUrl = async (orderInfo, amount, orderId, req) => {
   const date = new Date();
 
   const vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-  const returnUrl = "https://realstate-client.onrender.com/success";
+  const returnUrl = "https://bdsgoldenland.id.vn/success";
   const vnpTmnCode = '5Z1Z1OM0';
   const vnpHashSecret = 'XGYTWMNPIDGGGHEBIUKYUTSOZWKHCBCR';
  
